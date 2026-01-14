@@ -46,6 +46,12 @@ class Settings(BaseSettings):
     yagpt_api_key: str = ""
     claude_api_key: str = ""
 
+    # Optional: Additional Yandex Cloud fields
+    yc_sa_key_file: str = ""
+    yandex_domain: str = ""
+    bot_token: str = ""
+    port_env: int = 8080  # Alternative port from env
+
     # Automation
     auto_commit: bool = True
     log_level: str = "INFO"
@@ -53,6 +59,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"  # Ignore extra fields in .env
 
 @lru_cache()
 def get_settings() -> Settings:
