@@ -1,0 +1,22 @@
+openapi: 3.0.0
+info:
+  title: AI Morning Podcast API Gateway
+  version: 1.0.0
+  description: API Gateway for podcast.rapidapp.ru
+
+x-yc-apigateway:
+  service_account_id: aje20ep98sjv9dlk03f6
+
+paths:
+  /{proxy+}:
+    x-yc-apigateway-any-method:
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        container_id: bba6vo668ro691778vpr
+        service_account_id: aje20ep98sjv9dlk03f6
+      parameters:
+        - name: proxy
+          in: path
+          required: false
+          schema:
+            type: string
