@@ -1,53 +1,49 @@
--- ═══════════════════════════════════════════════════════════
--- YDB Tables Migration
--- Run: yc ydb scripting yql --database $YDB_DATABASE --script-file migrations/tables.yql
--- ═══════════════════════════════════════════════════════════
+-- YDB Table Schema for AI Morning Podcast
+-- Creates tables for episodes, articles, and metadata
 
--- Users table
-CREATE TABLE IF NOT EXISTS users (
-    id Utf8 NOT NULL,
-    email Utf8,
-    username Utf8,
-    data Json,
+-- Episodes table
+CREATE TABLE episodes (
+    episode_id Utf8,
+    date Date,
+    status Utf8,
+    article_count Int32,
+    script_text Utf8,
+    script_word_count Int32,
+    audio_url Utf8,
+    audio_duration_seconds Int32,
+    published_at Timestamp,
     created_at Timestamp,
-    updated_at Timestamp,
-    PRIMARY KEY (id)
+    PRIMARY KEY (episode_id)
 );
 
--- Items table with user reference
-CREATE TABLE IF NOT EXISTS items (
-    id Utf8 NOT NULL,
-    user_id Utf8,
-    name Utf8,
+-- Articles table
+CREATE TABLE articles (
+    article_id Utf8,
+    title Utf8,
     description Utf8,
-    data Json,
-    status Utf8 DEFAULT "active",
-    created_at Timestamp,
-    updated_at Timestamp,
-    PRIMARY KEY (id),
-    INDEX user_idx GLOBAL ON (user_id),
-    INDEX status_idx GLOBAL ON (status)
+    url Utf8,
+    published_at Timestamp,
+    source Utf8,
+    collected_at Timestamp,
+    PRIMARY KEY (article_id)
 );
 
--- Files metadata (actual files in Object Storage)
-CREATE TABLE IF NOT EXISTS files (
-    id Utf8 NOT NULL,
-    user_id Utf8,
-    filename Utf8,
-    content_type Utf8,
-    size Int64,
-    s3_key Utf8,
-    created_at Timestamp,
-    PRIMARY KEY (id),
-    INDEX user_idx GLOBAL ON (user_id)
+-- Episode articles mapping
+CREATE TABLE episode_articles (
+    episode_id Utf8,
+    article_id Utf8,
+    position Int32,
+    PRIMARY KEY (episode_id, article_id)
 );
 
--- Sessions for Telegram bot
-CREATE TABLE IF NOT EXISTS sessions (
-    user_id Utf8 NOT NULL,
-    chat_id Int64,
-    state Utf8,
-    data Json,
-    updated_at Timestamp,
-    PRIMARY KEY (user_id)
+-- Generation logs
+CREATE TABLE generation_logs (
+    log_id Utf8,
+    episode_id Utf8,
+    stage Utf8,
+    status Utf8,
+    error_message Utf8,
+    duration_ms Int32,
+    timestamp Timestamp,
+    PRIMARY KEY (log_id)
 );
