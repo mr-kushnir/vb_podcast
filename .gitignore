@@ -1,0 +1,64 @@
+# Environment
+.env
+.env.local
+*.env
+.deploy_info
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+venv/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/*.log
+*.log
+
+# Temp
+*.tmp
+*.temp
+/tmp/
+
+# Build
+*.zip
+function.zip
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache
+.kb_cache.json
+*.cache
+
+# Reports with sensitive data
+reports/*.json
+
+# Yandex Cloud
+.yandex-cloud/
+sa-key.json
+*.pem
+
+# Credentials
+cred.txt
+
+# Local settings
+.claude/settings.local.json

@@ -1,0 +1,70 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Task(*)",
+      "mcp__*"
+    ],
+    "deny": []
+  },
+  "env": {
+    "loadFromFile": ".env"
+  },
+  "model": "sonnet",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/session_init.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/auto_lint.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(*test*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/test_watcher.py"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/security_gate.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/auto_commit.py"
+          }
+        ]
+      }
+    ]
+  }
+}
