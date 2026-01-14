@@ -114,22 +114,48 @@ class YDBClient:
         return True
     
     def select(self, table: str, where: dict = None, limit: int = 100) -> List[Dict]:
-        """Select records from table"""
-        query = f"SELECT * FROM {table}"
-        
+        """Select records from table with parameterized query"""
+        # Validate table name (alphanumeric and underscore only)
+        if not table.replace('_', '').isalnum():
+            raise ValueError(f"Invalid table name: {table}")
+
+        query = f"SELECT * FROM {table}"  # nosec B608 - table name is validated
+        params = {}
+
         if where:
-            conditions = ' AND '.join(f'{k} = "{v}"' for k, v in where.items())
-            query += f" WHERE {conditions}"
-        
+            # Use parameterized queries for WHERE clause
+            conditions = []
+            for i, (k, v) in enumerate(where.items()):
+                # Validate column name
+                if not k.replace('_', '').isalnum():
+                    raise ValueError(f"Invalid column name: {k}")
+                param_name = f"param{i}"
+                conditions.append(f"{k} = ${param_name}")
+                params[f"${param_name}"] = str(v) if v is not None else None
+            query += " WHERE " + " AND ".join(conditions)
+
         query += f" LIMIT {limit}"
-        
-        return self.execute(query)
-    
+
+        return self.execute(query, params if params else None)
+
     def delete(self, table: str, where: dict) -> bool:
-        """Delete records from table"""
-        conditions = ' AND '.join(f'{k} = "{v}"' for k, v in where.items())
-        query = f"DELETE FROM {table} WHERE {conditions}"
-        self.execute(query)
+        """Delete records from table with parameterized query"""
+        # Validate table name
+        if not table.replace('_', '').isalnum():
+            raise ValueError(f"Invalid table name: {table}")
+
+        # Build parameterized WHERE clause
+        conditions = []
+        params = {}
+        for i, (k, v) in enumerate(where.items()):
+            if not k.replace('_', '').isalnum():
+                raise ValueError(f"Invalid column name: {k}")
+            param_name = f"param{i}"
+            conditions.append(f"{k} = ${param_name}")
+            params[f"${param_name}"] = str(v) if v is not None else None
+
+        query = f"DELETE FROM {table} WHERE " + " AND ".join(conditions)  # nosec B608 - table and columns validated, values parameterized
+        self.execute(query, params)
         return True
 
 

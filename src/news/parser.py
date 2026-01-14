@@ -70,5 +70,5 @@ class TechCrunchParser:
         return unique
 
     def generate_article_id(self, url: str) -> str:
-        """Generate consistent article ID from URL"""
-        return hashlib.md5(url.encode()).hexdigest()[:12]
+        """Generate consistent article ID from URL using SHA-256"""
+        return hashlib.sha256(url.encode()).hexdigest()[:12]

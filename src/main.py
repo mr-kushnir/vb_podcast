@@ -52,9 +52,11 @@ async def root():
     return {"message": "AI Morning Podcast Portal API"}
 
 if __name__ == "__main__":
+    # Use 127.0.0.1 for local dev, 0.0.0.0 only in production
+    host = "0.0.0.0" if not settings.debug else "127.0.0.1"
     uvicorn.run(
         "src.main:app",
-        host="0.0.0.0",
+        host=host,
         port=settings.port,
         reload=settings.debug
     )
