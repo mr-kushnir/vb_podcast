@@ -38,7 +38,7 @@ class NewsService:
 
                 return unique
 
-        except httpx.RequestError as e:
+        except (httpx.RequestError, Exception) as e:
             raise NewsCollectionError(f"Failed to fetch news: {e}")
 
     def _parse_page(self, html: str) -> List[Article]:
